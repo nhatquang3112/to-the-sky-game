@@ -5,7 +5,7 @@ This is the repository for Orbital 2017 group of Phung Tuan Hoang and Tran Nhat 
 - Features implemented:
   + Basic classes for game and game objects
   + Randomisation of bombs and gems
-  + Collision checking (precise hit box is not yet implemented
+  + Collision checking (precise hit box is not yet implemented)
   + Textures currently borrowed from the internet
 
 - Features to be implemented (non exclusive - to be added if see fit)
