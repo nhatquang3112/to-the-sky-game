@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
  */
 
 public class AssetLoader {
-    public static BitmapFont font, shadow;
+    public static BitmapFont font, shadow, consolas;
     public static Preferences prefs;
     public static TextureRegion bomb, green_gem, blue_gem, red_gem;
     public static Texture background;
@@ -21,6 +21,8 @@ public class AssetLoader {
         font.getData().setScale(.25f, -.25f);
         shadow = new BitmapFont(Gdx.files.internal("shadow.fnt.txt"));
         shadow.getData().setScale(.25f, -.25f);
+        consolas = new BitmapFont(Gdx.files.internal("consolas.fnt"));
+        consolas.getData().setScale(1, -1);
         bomb = new TextureRegion(new Texture(Gdx.files.internal("bomb.png")), 0, 0, 100, 100);
         red_gem = new TextureRegion(new Texture(Gdx.files.internal("red_gem.png")), 0, 0, 100, 100);
         green_gem = new TextureRegion(new Texture(Gdx.files.internal("green_gem.png")), 0, 0, 100, 100);
@@ -51,6 +53,7 @@ public class AssetLoader {
         // We must dispose of the texture when we are finished.
         font.dispose();
         shadow.dispose();
+        consolas.dispose();
         background.dispose();
     }
 }

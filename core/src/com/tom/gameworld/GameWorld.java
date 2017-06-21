@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Rectangle;
+import com.tom.gameobjects.Goal;
 import com.tom.gameobjects.Player;
 import com.tom.gameobjects.ScrollHandler;
 import com.tom.trHelpers.AssetLoader;
@@ -24,6 +25,7 @@ public class GameWorld {
     private GameState currentState;
     private int midPointX;
     private Rectangle ground = new Rectangle(0, GAME_HEIGHT, GAME_WIDTH, 20);
+    public Goal goal;
 
     //a variable that can only take certain values that have been defined for it
     public enum GameState {
@@ -34,14 +36,15 @@ public class GameWorld {
     public GameWorld(int midPointX) {
         currentState = GameState.READY;
         this.midPointX = midPointX;
+        goal = new Goal(0, this);
         player = new Player(GAME_WIDTH/6, 68, 100, 100); //Testing, player starts at center to the left of x axis by 33 pixels
-        scroller = new ScrollHandler(this);
+        scroller = new ScrollHandler(this, goal);
     }
 
 
 
     public void update(float delta) {
-        Gdx.app.log("GameWorld", "update");
+        //Gdx.app.log("GameWorld", "update");
         // Add a delta cap so that if our game takes too long
         // to update, we will not break our collision detection.
 
@@ -51,11 +54,11 @@ public class GameWorld {
 
         player.update(delta);
         scroller.update(delta);
+        if (player.isAlive()) goal.update(delta);
 
         //check if the player hits bomb
         if (scroller.collidesBomb(player) && player.isAlive()) {
-            scroller.stop();
-            player.die();
+            endGame();
             //AssetLoader.dead.play();
         }
 
@@ -67,8 +70,7 @@ public class GameWorld {
         //check if the player hits the ground
         if (Intersector.overlaps(player.getBoundingRect(), ground) ||
                 Intersector.overlaps(player.getBoundingRect(), ground)  ) {
-            scroller.stop();
-            player.die();
+            endGame();
             player.decelerate();
             currentState = GameState.GAMEOVER;
             if (score > AssetLoader.getHighScore()) {
@@ -116,5 +118,8 @@ public class GameWorld {
         return scroller;
     }
 
-
+    public void endGame() {
+        scroller.stop();
+        player.die();
+    }
 }

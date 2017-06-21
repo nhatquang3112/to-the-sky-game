@@ -26,7 +26,7 @@ public class GameScreen implements Screen {
 
         int midPointX = (int) (gameWidth / 2);
         world = new GameWorld(midPointX);
-        renderer = new GameRenderer(world,(int) gameWidth, midPointX); //put world into renderer as reference to render
+        renderer = new GameRenderer(world, (int) gameWidth, midPointX); //put world into renderer as reference to render
 
         //we are telling libGDX to take our new InputHandler as its processor
         Gdx.input.setInputProcessor(new InputHandler(world));

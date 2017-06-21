@@ -11,7 +11,8 @@ import java.util.Random;
 
 public class ScrollHandler {
     private GameWorld gameWorld;
-    public static final int SCROLL_SPEED = -1000;
+    private Goal goal;
+    public static final int SCROLL_SPEED = -500;
     public static final int BOMB_SIZE = 100;
     public static final int GEM_SIZE = 100;
     private Random r;
@@ -20,8 +21,9 @@ public class ScrollHandler {
     public static float GAME_HEIGHT = 1080;
     public static float GAME_WIDTH = Gdx.graphics.getWidth() / (Gdx.graphics.getHeight() / 1080);
 
-    public ScrollHandler(GameWorld gameWorld) {
+    public ScrollHandler(GameWorld gameWorld, Goal goal) {
         this.gameWorld = gameWorld;
+        this.goal = goal;
         grid = new Grid(gameWidth, 0, (int) gameWidth, (int) gameHeight, SCROLL_SPEED);
         grid2 = new Grid(2 * gameWidth, 0, (int) gameWidth, (int) gameHeight, SCROLL_SPEED);
     }
@@ -58,11 +60,11 @@ public class ScrollHandler {
     // Check if ANY gem hits the player.
     public void collidesGem(Player player) {
         for (int i = 0; i < grid.gem.length; i++) {
-            grid.gem[i].collides(player);
+            grid.gem[i].collides(player, goal);
         }
 
         for (int i = 0; i < grid2.gem.length; i++) {
-            grid2.gem[i].collides(player);
+            grid2.gem[i].collides(player, goal);
         }
     }
 

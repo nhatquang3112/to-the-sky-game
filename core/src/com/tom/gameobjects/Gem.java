@@ -42,10 +42,11 @@ public class Gem extends Scrollable {
         isScored = false;
     }
 
-    public void collides(Player player) {
+    public void collides(Player player, Goal goal) {
 
             if (Intersector.overlaps(player.getBoundingRect(), gem)) {
-                isScored = true;
+               if (isScored == false) goal.gemUpdate(color);
+               isScored = true;
             }
 
     }

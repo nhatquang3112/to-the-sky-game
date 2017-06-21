@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.tom.gameobjects.Bomb;
+import com.tom.gameobjects.Goal;
 import com.tom.gameobjects.Grid;
 import com.tom.gameobjects.Player;
 import com.tom.gameobjects.ScrollHandler;
@@ -33,11 +34,13 @@ public class GameRenderer {
     private Bomb bomb1, bomb2, bomb3;
     private ScrollHandler scroller;
     public Grid grid, grid2;
+    private Goal goal;
     private Random r;
 
     //constructor, as the renderer needs a world to render(draw)
     public GameRenderer(GameWorld world, int gameWidth, int midPointX) {
         myWorld = world;
+        this.goal = world.goal;
         this.gameWidth = gameWidth;
         this.midPointX = midPointX;
 
@@ -90,7 +93,7 @@ public class GameRenderer {
             if (grid.gem[i].color == 1) batcher.draw(AssetLoader.blue_gem, grid.gem[i].getX(), grid.gem[i].getY());
             if (grid.gem[i].color == 2) batcher.draw(AssetLoader.red_gem, grid.gem[i].getX(), grid.gem[i].getY());
             if (grid.gem[i].color == 3) batcher.draw(AssetLoader.green_gem, grid.gem[i].getX(), grid.gem[i].getY());
-            System.out.println("Gem Drawn");
+            //System.out.println("Gem Drawn");
         }
 
         for (int i = 0; i < grid2.gem.length; i++) {
@@ -98,8 +101,14 @@ public class GameRenderer {
             if (grid2.gem[i].color == 1) batcher.draw(AssetLoader.blue_gem, grid2.gem[i].getX(), grid2.gem[i].getY());
             if (grid2.gem[i].color == 2) batcher.draw(AssetLoader.red_gem, grid2.gem[i].getX(), grid2.gem[i].getY());
             if (grid2.gem[i].color == 3) batcher.draw(AssetLoader.green_gem, grid2.gem[i].getX(), grid2.gem[i].getY());
-            System.out.println("Gem Drawn");
+            //System.out.println("Gem Drawn");
         }
+
+        AssetLoader.consolas.draw(batcher, "R  " + goal.red_gem_goal, 10, 100);
+        AssetLoader.consolas.draw(batcher, "G  " + goal.green_gem_goal, 10, 300);
+        AssetLoader.consolas.draw(batcher, "B  " + goal.blue_gem_goal, 10, 500);
+
+        AssetLoader.consolas.draw(batcher, "T " + (int) goal.remaining_time, 10, 700);
 
         batcher.end();
 
