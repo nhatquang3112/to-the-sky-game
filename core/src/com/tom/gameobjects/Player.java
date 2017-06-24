@@ -30,12 +30,14 @@ public class Player {
         isAlive = true;
     }
 
-    public void onRestart(int y) {
-        position.y = y;
+    public void onRestart(int x) {
+        rotation = 0;
+        position.x = x;
+        position.y = 68;
         velocity.x = 0;
         velocity.y = 0;
         acceleration.x = 0;
-        acceleration.y = 460;
+        acceleration.y = 2000;
         isAlive = true;
     }
 
@@ -93,7 +95,7 @@ public class Player {
     //make the bird goes up, negative as the y axis is pointing down
     public void onClick() {
         if (isAlive) {
-            velocity.y = -750;
+            velocity.y = -700;
         }
     }
 

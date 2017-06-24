@@ -1,6 +1,7 @@
 package com.tom.gameobjects;
 
 import com.tom.gameworld.GameWorld;
+import static com.tom.gameobjects.ScrollHandler.SCROLL_SPEED;
 
 import java.util.Random;
 
@@ -13,6 +14,7 @@ public class Goal {
     public float remaining_time;
     private Random r = new Random();
     private GameWorld world;
+    private int increment;
 
     //constructor
     public Goal(float extra_time, GameWorld world) {
@@ -21,6 +23,7 @@ public class Goal {
         green_gem_goal = r.nextInt(2) + 3;
         red_gem_goal = r.nextInt(2) + 3;
         blue_gem_goal = r.nextInt(2) + 3;
+        increment = green_gem_goal+ red_gem_goal + blue_gem_goal;
 
         remaining_time = 30 + extra_time;
     }
@@ -38,7 +41,7 @@ public class Goal {
         }
 
         remaining_time -= delta;
-        System.out.printf("%d %d %d %f\n", green_gem_goal, red_gem_goal, blue_gem_goal, remaining_time);
+        //System.out.printf("%d %d %d %f\n", green_gem_goal, red_gem_goal, blue_gem_goal, remaining_time);
     }
 
     public void gemUpdate(int gem_type) {
@@ -57,11 +60,26 @@ public class Goal {
         }
     }
 
-    public void reset() {
-        remaining_time += 60;
-
+    public void onRestart() {
+        remaining_time = 30;
         green_gem_goal = r.nextInt(2) + 3;
         red_gem_goal = r.nextInt(2) + 3;
         blue_gem_goal = r.nextInt(2) + 3;
+        increment = green_gem_goal+ red_gem_goal + blue_gem_goal;
+    }
+
+    public void reset() {
+        //reset time
+        remaining_time = 30 ;
+        //add increment before resetting
+        world.addScore(increment);
+        //speed up the game
+        SCROLL_SPEED -= 20;
+        //reset everything again
+        green_gem_goal = r.nextInt(2) + 3;
+        red_gem_goal = r.nextInt(2) + 3;
+        blue_gem_goal = r.nextInt(2) + 3;
+        increment = green_gem_goal+ red_gem_goal + blue_gem_goal;
+
     }
 }

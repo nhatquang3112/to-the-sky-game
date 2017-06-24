@@ -6,6 +6,11 @@ import com.tom.gameworld.GameRenderer;
 import com.tom.gameworld.GameWorld;
 import com.tom.trHelpers.InputHandler;
 
+import java.util.Stack;
+
+import static com.tom.gameobjects.ScrollHandler.GAME_HEIGHT;
+import static com.tom.gameobjects.ScrollHandler.GAME_WIDTH;
+
 /**
  * Created by Nhat Quang on 6/17/2017.
  */
@@ -14,6 +19,9 @@ public class GameScreen implements Screen {
     private GameWorld world; //to update
     private GameRenderer renderer; //to render
     private float runTime = 0; //for animation
+
+    public static Stack<GameState> STATE_STACK = new Stack<GameState>();
+    public enum GameState { READY, GAME, GAMEOVER, HIGHSCORE, MENU }
 
 
     public GameScreen() {
@@ -31,6 +39,7 @@ public class GameScreen implements Screen {
         //we are telling libGDX to take our new InputHandler as its processor
         Gdx.input.setInputProcessor(new InputHandler(world));
 
+        STATE_STACK.push(GameState.MENU);
     }
 
     @Override
@@ -41,8 +50,32 @@ public class GameScreen implements Screen {
     @Override
     //Basically our GameLoop
     public void render(float delta) {
-        world.update(delta);
-        renderer.render(runTime);
+        switch (STATE_STACK.peek()) {
+
+            case MENU: {
+                renderer.render(delta);
+                break;
+            }
+
+            case READY:
+                break;
+
+            case GAME: {
+                world.update(delta);
+                renderer.render(delta);
+                break;
+            }
+
+            case GAMEOVER:
+                break;
+
+            case HIGHSCORE: {
+                renderer.render(delta);
+                break;
+            }
+
+            default: break;
+        }
     }
 
     @Override
@@ -68,5 +101,13 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    public void onClick(float screenX, float screenY) {
+        if (STATE_STACK.peek() == GameState.MENU) {
+            if (screenX > GAME_WIDTH / 2 - 200 && screenX < GAME_WIDTH / 2 + 200 && screenY > GAME_HEIGHT / 6 && screenY < GAME_HEIGHT / 6 + 200) {
+                STATE_STACK.push(GameState.GAME);
+            }
+        }
     }
 }

@@ -3,6 +3,12 @@ package com.tom.trHelpers;
 import com.badlogic.gdx.InputProcessor;
 import com.tom.gameobjects.Player;
 import com.tom.gameworld.GameWorld;
+import com.tom.screens.GameScreen;
+import com.tom.screens.GameScreen.GameState;
+
+import static com.tom.gameobjects.ScrollHandler.GAME_HEIGHT;
+import static com.tom.gameobjects.ScrollHandler.GAME_WIDTH;
+import static com.tom.screens.GameScreen.STATE_STACK;
 
 /**
  * Created by Nhat Quang on 6/17/2017.
@@ -38,16 +44,37 @@ public class InputHandler implements InputProcessor {
 
     @Override //what we use as input method
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        //if (myWorld.isReady()) {
-          //  myWorld.start();
-        //}
+        switch (STATE_STACK.peek()) {
+            case MENU: {
+                if (screenX > 200 && screenX < 702 && screenY > GAME_HEIGHT * 0.6 && screenY < GAME_HEIGHT * 0.6 + 200) {
+                    STATE_STACK.push(GameState.GAME);
+                }
 
-        myPlayer.onClick();
+                if (screenX > GAME_WIDTH - 702 && screenX < GAME_WIDTH - 200 && screenY > GAME_HEIGHT * 0.6 && screenY < GAME_HEIGHT * 0.6 + 200){
+                    STATE_STACK.push(GameState.HIGHSCORE);
+                    System.out.println("High score registered");
+                }
+                return true;
+            }
 
-        //if (myWorld.isGameOver() || myWorld.isHighScore()) {
-            // Reset all variables, go to GameState.READY
-          //  myWorld.restart();
-        //}
+            case GAME: {
+                if (myWorld.isReady()) {
+                    myWorld.start();
+                }
+                myPlayer.onClick();
+
+                if (myWorld.isGameOver() || myWorld.isHighScore()) {
+                    // Reset all variables, go to GameState.READY and open up main menu
+                    myWorld.restart();
+                }
+
+                return true;
+            }
+            case HIGHSCORE: {
+                STATE_STACK.pop();
+                STATE_STACK.push(GameState.MENU);
+            }
+        }
 
         return true;
     }

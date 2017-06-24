@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static com.tom.gameobjects.ScrollHandler.BOMB_SIZE;
+import static com.tom.gameobjects.ScrollHandler.GAME_HEIGHT;
+import static com.tom.gameobjects.ScrollHandler.GAME_WIDTH;
 import static com.tom.gameobjects.ScrollHandler.GEM_SIZE;
 import static com.tom.gameobjects.ScrollHandler.SCROLL_SPEED;
 
@@ -22,13 +24,11 @@ public class Grid extends Scrollable {
     public Gem[] gem = new Gem[r.nextInt(5) + 5];
     public int[][] grid_matrix;
     public int matrix_col, matrix_row;
-    public Background background;
 
     //constructor
     public Grid(float x, float y, int gameWidth, int gameHeight, float scrollSpeed) {
         super(x, y, gameWidth, gameHeight, scrollSpeed);
         grid = new Rectangle();
-        background = new Background(x, y, gameWidth, gameHeight, SCROLL_SPEED);
 
         //remember y then x here
         matrix_col = gameWidth / BOMB_SIZE;
@@ -49,10 +49,21 @@ public class Grid extends Scrollable {
         Gdx.app.log("Grid", "New Grid");
     }
 
+    public Grid(float x, float y, int gameWidth, int gameHeight, float scrollSpeed, String args) {
+        super(x, y, gameWidth, gameHeight, scrollSpeed);
+        grid = new Rectangle();
+
+        bomb = null; gem = null;
+
+        Gdx.app.log("Grid", "New Grid");
+    }
+
     @Override
     public void update(float delta) {
         super.update(delta);
         grid.set(position.x, position.y, width, height);
+
+        if (bomb == null && gem == null) return;
 
         for (int i = 0; i < bomb.size(); i++) {
             bomb.get(i).update(delta);
@@ -61,8 +72,6 @@ public class Grid extends Scrollable {
         for (int i = 0; i < gem.length; i++) {
             gem[i].update(delta);
         }
-
-        background.update(delta);
     }
 
     public void randomDirection(int[][] grid_matrix, int starting_col) {
@@ -145,6 +154,9 @@ public class Grid extends Scrollable {
     @Override
     public void stop() {
         super.stop();
+
+        if (bomb == null && gem == null) return;
+
         for (int i = 0; i < bomb.size(); i++) {
             bomb.get(i).stop();
         }
@@ -152,7 +164,10 @@ public class Grid extends Scrollable {
         for (int i = 0; i < gem.length; i++) {
             gem[i].stop();
         }
+    }
 
-        background.stop();
+    public void onRestart(float x, float scrollSpeed) {
+        velocity.x = scrollSpeed;
+        reset(x);
     }
 }

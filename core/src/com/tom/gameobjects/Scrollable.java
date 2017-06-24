@@ -22,6 +22,11 @@ public class Scrollable {
         isScrolledLeft = false;
     }
 
+    //increase scroll speed by fix amount
+    public void speedUp() {
+        velocity.x -= 20 ;
+    }
+
     public void update(float delta) {
         position.add(velocity.cpy().scl(delta));
 
