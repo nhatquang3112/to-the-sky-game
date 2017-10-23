@@ -1,9 +1,11 @@
 package com.tom.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.tom.gameworld.GameRenderer;
 import com.tom.gameworld.GameWorld;
+import com.tom.trHelpers.AssetLoader;
 import com.tom.trHelpers.InputHandler;
 
 import java.util.Stack;
@@ -21,7 +23,8 @@ public class GameScreen implements Screen {
     private float runTime = 0; //for animation
 
     public static Stack<GameState> STATE_STACK = new Stack<GameState>();
-    public enum GameState { READY, GAME, GAMEOVER, HIGHSCORE, MENU }
+    public enum GameState { READY, GAME, GAMEOVER, HIGHSCORE, MENU, ABOUT, SHOP, SHOP_PURCHASING, NOMONEY }
+    String buying_item = null;
 
 
     public GameScreen() {
@@ -50,27 +53,109 @@ public class GameScreen implements Screen {
     @Override
     //Basically our GameLoop
     public void render(float delta) {
+        runTime += delta;
+        Preferences prefs = Gdx.app.getPreferences("PREFERENCES");
         switch (STATE_STACK.peek()) {
 
             case MENU: {
-                renderer.render(delta);
+                renderer.render(runTime);
+                if (prefs.getBoolean("playMusic")) {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.play();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
+
                 break;
             }
 
             case READY:
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.stop();
+
                 break;
 
             case GAME: {
+                if (prefs.getBoolean("playMusic")) {
+                    if (world.getPlayer().isAlive()) AssetLoader.play_music.play();
+                    else AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.stop();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
                 world.update(delta);
-                renderer.render(delta);
+                renderer.render(runTime);
                 break;
             }
 
             case GAMEOVER:
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.stop();
                 break;
 
             case HIGHSCORE: {
-                renderer.render(delta);
+                if (prefs.getBoolean("playMusic")) {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.play();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
+
+                renderer.render(runTime);
+                break;
+            }
+
+            case SHOP: {
+                if (prefs.getBoolean("playMusic")) {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.play();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
+
+                renderer.render(runTime);
+                break;
+            }
+            case SHOP_PURCHASING: {
+                if (prefs.getBoolean("playMusic")) {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.play();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
+
+                renderer.render(runTime);
+                break;
+
+            }
+            case ABOUT: {
+                if (prefs.getBoolean("playMusic")) {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.play();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
+
+                renderer.renderAbout(runTime);
+                break;
+            }
+
+            case NOMONEY: {
+                if (prefs.getBoolean("playMusic")) {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.play();
+                } else {
+                    AssetLoader.play_music.stop();
+                    AssetLoader.menu_music.pause();
+                }
+
+                renderer.render(runTime);
                 break;
             }
 
@@ -101,13 +186,5 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
 
-    }
-
-    public void onClick(float screenX, float screenY) {
-        if (STATE_STACK.peek() == GameState.MENU) {
-            if (screenX > GAME_WIDTH / 2 - 200 && screenX < GAME_WIDTH / 2 + 200 && screenY > GAME_HEIGHT / 6 && screenY < GAME_HEIGHT / 6 + 200) {
-                STATE_STACK.push(GameState.GAME);
-            }
-        }
     }
 }

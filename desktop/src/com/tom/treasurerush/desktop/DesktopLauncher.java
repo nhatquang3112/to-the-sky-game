@@ -7,7 +7,7 @@ import com.tom.treasurerush.TRGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.title = "Treasure Rush";
+		config.title = "To The Sky";
 		//width and height of the window, resolution
 		config.width = 1920;
 		config.height = 1080;

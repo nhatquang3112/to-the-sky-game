@@ -2,6 +2,8 @@ package com.tom.gameobjects;
 
 import com.badlogic.gdx.math.Vector2;
 
+import static com.tom.gameobjects.ScrollHandler.SCROLL_SPEED;
+
 /**
  * Created by Nhat Quang on 6/17/2017.
  */
@@ -22,13 +24,9 @@ public class Scrollable {
         isScrolledLeft = false;
     }
 
-    //increase scroll speed by fix amount
-    public void speedUp() {
-        velocity.x -= 20 ;
-    }
-
     public void update(float delta) {
         position.add(velocity.cpy().scl(delta));
+        velocity.x = SCROLL_SPEED;
 
         // If the Scrollable object is no longer visible:
         if (position.x + width < 0) {

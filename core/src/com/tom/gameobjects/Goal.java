@@ -14,7 +14,6 @@ public class Goal {
     public float remaining_time;
     private Random r = new Random();
     private GameWorld world;
-    private int increment;
 
     //constructor
     public Goal(float extra_time, GameWorld world) {
@@ -23,7 +22,6 @@ public class Goal {
         green_gem_goal = r.nextInt(2) + 3;
         red_gem_goal = r.nextInt(2) + 3;
         blue_gem_goal = r.nextInt(2) + 3;
-        increment = green_gem_goal+ red_gem_goal + blue_gem_goal;
 
         remaining_time = 30 + extra_time;
     }
@@ -36,7 +34,8 @@ public class Goal {
         }
 
         if (remaining_time <= 0) {
-            world.endGame();
+            world.getPlayer().die();
+            remaining_time = 0;
             return;
         }
 
@@ -65,21 +64,18 @@ public class Goal {
         green_gem_goal = r.nextInt(2) + 3;
         red_gem_goal = r.nextInt(2) + 3;
         blue_gem_goal = r.nextInt(2) + 3;
-        increment = green_gem_goal+ red_gem_goal + blue_gem_goal;
     }
 
     public void reset() {
         //reset time
-        remaining_time = 30 ;
+        remaining_time += 7 ;
         //add increment before resetting
-        world.addScore(increment);
+        world.addScore(10);
         //speed up the game
-        SCROLL_SPEED -= 20;
+        SCROLL_SPEED *= 1.2;
         //reset everything again
         green_gem_goal = r.nextInt(2) + 3;
         red_gem_goal = r.nextInt(2) + 3;
         blue_gem_goal = r.nextInt(2) + 3;
-        increment = green_gem_goal+ red_gem_goal + blue_gem_goal;
-
     }
 }

@@ -10,6 +10,8 @@ import static com.tom.gameobjects.ScrollHandler.BOMB_SIZE;
 import static com.tom.gameobjects.ScrollHandler.GAME_HEIGHT;
 import static com.tom.gameobjects.ScrollHandler.GAME_WIDTH;
 import static com.tom.gameobjects.ScrollHandler.GEM_SIZE;
+import static com.tom.gameobjects.ScrollHandler.GRID_COUNT;
+import static com.tom.gameobjects.ScrollHandler.POWER_SIZE;
 import static com.tom.gameobjects.ScrollHandler.SCROLL_SPEED;
 
 /**
@@ -19,49 +21,56 @@ import static com.tom.gameobjects.ScrollHandler.SCROLL_SPEED;
 public class Grid extends Scrollable {
     //elements here
     private Rectangle grid;
+    public Rectangle ground;
     private Random r = new Random();
     public ArrayList<Bomb> bomb = new ArrayList<Bomb>();
-    public Gem[] gem = new Gem[r.nextInt(5) + 5];
+    public ArrayList<Gem> gem = new ArrayList<Gem>();
     public int[][] grid_matrix;
     public int matrix_col, matrix_row;
+    public Powerup power_up = null;
 
     //constructor
     public Grid(float x, float y, int gameWidth, int gameHeight, float scrollSpeed) {
         super(x, y, gameWidth, gameHeight, scrollSpeed);
+        GRID_COUNT++;
         grid = new Rectangle();
+        ground = new Rectangle();
 
         //remember y then x here
         matrix_col = gameWidth / BOMB_SIZE;
-        matrix_row = gameHeight / BOMB_SIZE;
+        matrix_row = (gameHeight - 50 ) / BOMB_SIZE;
         grid_matrix = new int[matrix_row][matrix_col];
 
-        int i = 0;
+        randomDirection();
+        /*switch(r.nextInt(4) + 1) {
+            case 1: randomDirection(); break;
+            case 2: randomDirection2(); break;
+            case 3: randomDirection3(); break;
+            case 4: randomDirection4(); break;
+        }*/
 
-        while (i < this.matrix_col - 8) {
-            randomDirection(grid_matrix, i);
-            i += 8;
-        }
 
-        randomGem();
 
         updateGameObjects();
 
-        Gdx.app.log("Grid", "New Grid");
+
     }
 
     public Grid(float x, float y, int gameWidth, int gameHeight, float scrollSpeed, String args) {
         super(x, y, gameWidth, gameHeight, scrollSpeed);
         grid = new Rectangle();
+        ground = new Rectangle(position.x, GAME_HEIGHT - 50, width, 50);
 
         bomb = null; gem = null;
-
-        Gdx.app.log("Grid", "New Grid");
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
         grid.set(position.x, position.y, width, height);
+        ground.set(position.x, GAME_HEIGHT - 50, width, 50);
+
+        if (power_up != null) power_up.update(delta);
 
         if (bomb == null && gem == null) return;
 
@@ -69,12 +78,35 @@ public class Grid extends Scrollable {
             bomb.get(i).update(delta);
         }
 
-        for (int i = 0; i < gem.length; i++) {
-            gem[i].update(delta);
+        for (int i = 0; i < gem.size(); i++) {
+            gem.get(i).update(delta);
         }
     }
 
-    public void randomDirection(int[][] grid_matrix, int starting_col) {
+    public void randomDirection() {
+        int i = 0;
+
+        while (i < this.matrix_col - 8) {
+            randomBomb(i);
+            i += 8;
+        }
+
+        for (i = 0; i < 10; i++) randomGem();
+
+        //random powerup
+        if (GRID_COUNT % 5 != 1) return;
+        int row = r.nextInt(this.matrix_row);
+        int col = r.nextInt(this.matrix_col);
+
+        while (grid_matrix[row][col] != 0) {
+            row = r.nextInt(this.matrix_row);
+            col = r.nextInt(this.matrix_col);
+        }
+
+        grid_matrix[row][col] = 8;
+    }
+
+    public void randomBomb(int starting_col) {
         int bomb_row = r.nextInt(this.matrix_row);
         int direction = r.nextInt(3);
 
@@ -119,7 +151,7 @@ public class Grid extends Scrollable {
         }
     }
 
-    public Gem randomGem() {
+    public void randomGem() {
         int row = r.nextInt(this.matrix_row);
         int col = r.nextInt(this.matrix_col);
 
@@ -129,8 +161,6 @@ public class Grid extends Scrollable {
         }
 
         grid_matrix[row][col] = 1;
-
-        return new Gem(GEM_SIZE * col + this.getX(), GEM_SIZE * row, GEM_SIZE, GEM_SIZE, SCROLL_SPEED);
     }
 
     public void updateGameObjects() {
@@ -141,33 +171,78 @@ public class Grid extends Scrollable {
                 if (grid_matrix[row][col] == 9) {
                     bomb.add(bomb_counter++, new Bomb(BOMB_SIZE * col + this.getX(), BOMB_SIZE * row, BOMB_SIZE, BOMB_SIZE, SCROLL_SPEED));
                 }
+                if (grid_matrix[row][col] == 1) {
+                    gem.add(new Gem(GEM_SIZE * col + this.getX(), GEM_SIZE * row, GEM_SIZE, GEM_SIZE, SCROLL_SPEED));
+                }
+                if (grid_matrix[row][col] == 8) {
+                    power_up = new Powerup(POWER_SIZE * col + this.getX(), POWER_SIZE * row, POWER_SIZE, POWER_SIZE, SCROLL_SPEED);
+                }
             }
-        }
-
-        System.out.println("Gem size");
-        for (int i = 0; i < gem.length; i++) {
-            gem[i] = randomGem();
-            System.out.printf("%f %f\n", gem[i].getX(), gem[i].getY());
         }
     }
 
     @Override
     public void stop() {
-        super.stop();
 
-        if (bomb == null && gem == null) return;
-
-        for (int i = 0; i < bomb.size(); i++) {
-            bomb.get(i).stop();
-        }
-
-        for (int i = 0; i < gem.length; i++) {
-            gem[i].stop();
-        }
     }
 
     public void onRestart(float x, float scrollSpeed) {
         velocity.x = scrollSpeed;
         reset(x);
+    }
+
+    public void randomDirection2() {
+        for (int i = 0; i < matrix_row / 2; i++) {
+            for (int j = 0; j < matrix_col; j += 8) {
+                grid_matrix[i][j] = 9;
+            }
+        }
+
+        for (int i = 0; i < matrix_col; i++) {
+            if (i % 8 == 3 || i % 8 == 4 || i % 8 == 5) {
+                grid_matrix[matrix_row / 2 + 2][i] = 9;
+            }
+        }
+
+        for (int i = 3; i < matrix_col; i += 8) {
+            grid_matrix[matrix_row / 6][i] = 1;
+            grid_matrix[matrix_row / 6][i + 2] = 1;
+            grid_matrix[matrix_row / 3][i] = 1;
+            grid_matrix[matrix_row / 3][i + 2] = 1;
+        }
+    }
+
+    public void randomDirection3() {
+        for (int i = 0; i < matrix_row / 3; i++) {
+            grid_matrix[i][i] = 9;
+            grid_matrix[matrix_row - 1 - i][matrix_row - 1 - i] = 9;
+        }
+
+        for (int i = matrix_row - 1; i > matrix_row * 2 / 3.0; i--) {
+            grid_matrix[i][matrix_row - 1 - i] = 9;
+            grid_matrix[matrix_row - 1 - i][i] = 9;
+        }
+
+        grid_matrix[matrix_row / 3 + 1][matrix_row / 3 + 1] = 1;
+        grid_matrix[matrix_row / 3 + 1][matrix_row / 3 + 2] = 1;
+        grid_matrix[matrix_row / 3 + 2][matrix_row / 3 + 1] = 1;
+        grid_matrix[matrix_row / 3 + 2][matrix_row / 3 + 2] = 1;
+    }
+
+    public void randomDirection4() {
+        for (int i = matrix_row / 3; i >= 0; i--) {
+            grid_matrix[i][matrix_row / 3 - i] = 9;
+            grid_matrix[matrix_row - 1 - i][matrix_row / 3 - i] = 9;
+        }
+
+        for (int i = 0; i < 9; i++) {
+            grid_matrix[matrix_row / 3][matrix_row / 3 + 2 + i] = 9;
+            grid_matrix[matrix_row - 1 - matrix_row / 3][matrix_row / 3 + 2 + i] = 9;
+        }
+
+        for (int i = 0; i <= 8; i += 2) {
+            grid_matrix[1][matrix_row / 3 + 2 + i] = 1;
+            grid_matrix[matrix_row - 2][matrix_row / 3 + 2 + i] = 1;
+        }
     }
 }

@@ -2,8 +2,11 @@ package com.tom.gameobjects;
 
 import java.util.Random;
 
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by Nhat Quang on 6/17/2017.
@@ -11,7 +14,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Bomb extends Scrollable {
     private Random r;
-    private Rectangle bomb;
+    private Circle bomb;
     private boolean isScored = false;
 
 
@@ -19,7 +22,7 @@ public class Bomb extends Scrollable {
         super(x, y, width, height, scrollSpeed);
         // Initialize a Random object for Random number generation
         r = new Random();
-        bomb = new Rectangle();
+        bomb = new Circle();
     }
 
 
@@ -27,8 +30,7 @@ public class Bomb extends Scrollable {
     public void update(float delta) {
         // Call the update method in the superclass (Scrollable)
         super.update(delta);
-        bomb.set(position.x, position.y, width, height);
-
+        bomb.set(position.x + 75 / 2f, position.y + 75 / 2f, 75 / 2f);
     }
 
     @Override
@@ -41,13 +43,31 @@ public class Bomb extends Scrollable {
     }
 
     public boolean collides(Player player) {
-        if (position.x < player.getX() + player.getWidth()) {
-            return (Intersector.overlaps(player.getBoundingRect(), bomb));
+        return (isCollision(player.getBoundingPolygon(), bomb));
+    }
+
+    private boolean isCollision(Polygon p, Circle c) {
+        float[] vertices = p.getTransformedVertices();
+        Vector2 center = new Vector2(c.x, c.y);
+        float squareRadius = c.radius * c.radius;
+        for (int i = 0; i < vertices.length; i += 2) {
+            if (i == 0) {
+                if (Intersector.intersectSegmentCircle(new Vector2(
+                        vertices[vertices.length - 2],
+                        vertices[vertices.length - 1]), new Vector2(
+                        vertices[i], vertices[i + 1]), center, squareRadius))
+                    return true;
+            } else {
+                if (Intersector.intersectSegmentCircle(new Vector2(
+                        vertices[i - 2], vertices[i - 1]), new Vector2(
+                        vertices[i], vertices[i + 1]), center, squareRadius))
+                    return true;
+            }
         }
         return false;
     }
 
-    public Rectangle getBomb() {
+    public Circle getBomb() {
         return bomb;
     }
 
