@@ -1,4 +1,5 @@
-![alt text](https://imgur.com/a/gfeGt)
+![alt text](https://i.imgur.com/WH1TjPE.png)
+
 To the Sky! The Android Game (Originally named Treasure Rush)
 
 This is the repository for NUS Orbital 2017 group of Phung Tuan Hoang and Tran Nhat Quang Our game is now available for download: https://drive.google.com/file/d/0B3o5pRXn8--aaGJHOVlzWjRKUVU/view?usp=sharing Please download the game and show us your support ! Feedbacks and push requests are greatly appreciated.
